@@ -1,0 +1,46 @@
+name: Pulumi Up
+on:
+  workflow_call:
+    inputs: 
+      role-to-assume: 
+        description: the aws role arn to use for this workflow
+        type: string
+        required : true
+      stack-name: 
+        description: the name of the pulumi stack
+        type: string
+        required : false
+        default: prod
+jobs:
+  update:
+    name: Pulumi Up
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.role-to-assume }}
+          aws-region: us-east-2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Load Dependencies
+        run: npm ci
+
+      - name: Pulumi Up
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          refresh: true
+          stack-name: ${{ inputs.role-to-assume }}
+
