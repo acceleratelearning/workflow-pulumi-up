@@ -48,5 +48,5 @@ jobs:
         with:
           command: up
           refresh: true
-          stack-name: ${{ inputs.role-to-assume }}
+          stack-name: ${{ inputs.stack-name }}
 
