@@ -34,6 +34,12 @@ jobs:
         with:
           node-version: 18
 
+      - name: Authenticate with AWS Code Artifact
+        run: |
+          aws codeartifact login --tool npm --repository repo --domain acceleratelearning --domain-owner 669462986110
+          CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain acceleratelearning --domain-owner 669462986110 --query authorizationToken --output text`
+          echo "CODEARTIFACT_AUTH_TOKEN=$CODEARTIFACT_AUTH_TOKEN" >> $GITHUB_ENV
+
       - name: Load Dependencies
         run: npm ci
 
